@@ -9,7 +9,7 @@ const createUser = async (req, res) => {
         const userInfo = await UserSchema.findOne({ username });
         if (userInfo) return notFound(res, {}, "Tên tài khoản đã tồn tại!");
         if (!userInfo) {
-            const user = await UserSchema.create({
+            await UserSchema.create({
                 username: username,
                 password: bcrypt.hashSync(password, SALT_ROUND),
             });

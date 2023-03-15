@@ -15,7 +15,7 @@ const login = async (req, res) => {
                 process.env.JWT_ACCESS_TOKEN_LIFE
             );
             if (accesToken) {
-                return success(res, { accesToken }, "OK");
+                return success(res, { accesToken, userId: userInfor.id });
             } else {
                 unauthorized(res, {}, "Đăng nhập không thành công");
             }
@@ -23,7 +23,7 @@ const login = async (req, res) => {
             return forbidden(res, {}, "Sai tài khoản hoặc mật khẩu!");
         }
     } else {
-        return forbidden(res, {}, "Sai tài khoản hoặc mật khẩu!");
+        return forbidden(res, {}, "Vui lòng nhập đủ tài khoản hoặc mật khẩu!");
     }
 };
 

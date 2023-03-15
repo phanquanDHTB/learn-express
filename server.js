@@ -1,7 +1,7 @@
 import express from "express";
 import * as dotenv from "dotenv";
 import mongoose from "mongoose";
-import { loginRoute, userRoute } from "./routes/index.js";
+import { loginRoute, productRoute, userRoute, billRoute } from "./routes/index.js";
 
 dotenv.config();
 const app = express();
@@ -20,10 +20,8 @@ app.use(express.json({ limit: "25mb" }));
 
 app.use("/login", loginRoute);
 app.use("/user", userRoute);
-
-app.get("/", (req, res) => {
-    res.send("testtttt aaaaa");
-});
+app.use("/product", productRoute);
+app.use("/bill", billRoute);
 
 app.listen(port, (async) => {
     console.log(`app running on port ${port}`);
