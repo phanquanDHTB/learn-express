@@ -1,5 +1,5 @@
 import UserSchema from "../models/user.model.js";
-import { notFound, success } from "../utils/response.js";
+import { invalidData, success } from "../utils/response.js";
 import bcrypt from "bcrypt";
 import { SALT_ROUND } from "../constants/auth.js";
 
@@ -16,6 +16,7 @@ const createUser = async (req, res) => {
             return success(res);
         }
     }
+    invalidData(res);
 };
 
 const changePassword = async (req, res) => {
@@ -28,9 +29,10 @@ const changePassword = async (req, res) => {
             await userInfo.save();
             return success(res, {}, "Đổi mật khẩu thành công");
         } else {
-            return notFound(res, {}, "Tài khoản or mật khẩu không chính xác!");
+            return invalidData(res, {}, "Tài khoản or mật khẩu không chính xác!");
         }
     }
+    invalidData(res);
 };
 
 export { createUser, changePassword };

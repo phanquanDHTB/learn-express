@@ -1,5 +1,6 @@
-import { verifyToken } from "../services/auth.services.js";
-import { forbidden, unauthorized } from "../utils/response.js";
+import { verifyToken } from "../services/auth.service.js";
+import { forbidden, invalidToken } from "../utils/response.js";
+import UserSchema from "../models/user.model.js";
 
 export const authenToken = async (req, res, next) => {
     const accessTokenFromHeader = req.header("Authorization")?.split(" ")[1];
@@ -8,7 +9,8 @@ export const authenToken = async (req, res, next) => {
     }
     const verified = await verifyToken(accessTokenFromHeader, process.env.JWT_ACCESS_TOKEN_SECRET);
     if (verified?.message) {
-        return unauthorized(res, verified.message, verified.message.message);
+        return invalidToken(res, verified.message, verified.message.message);
     }
+    req.user = await UserSchema.findOne({ username: verified.payload.username });
     next();
 };

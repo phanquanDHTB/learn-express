@@ -1,6 +1,6 @@
 import UserSchema from "../models/user.model.js";
-import { generateToken } from "../services/auth.services.js";
-import { forbidden, notFound, success, unauthorized } from "../utils/response.js";
+import { generateToken } from "../services/auth.service.js";
+import { forbidden, notFound, serverInternal, success } from "../utils/response.js";
 import bcrypt from "bcrypt";
 
 const login = async (req, res) => {
@@ -15,9 +15,9 @@ const login = async (req, res) => {
                 process.env.JWT_ACCESS_TOKEN_LIFE
             );
             if (accesToken) {
-                return success(res, { accesToken, userId: userInfor.id });
+                return success(res, { accesToken });
             } else {
-                unauthorized(res, {}, "Đăng nhập không thành công");
+                serverInternal(res, {}, "Đăng nhập không thành công");
             }
         } else {
             return forbidden(res, {}, "Sai tài khoản hoặc mật khẩu!");

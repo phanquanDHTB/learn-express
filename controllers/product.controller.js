@@ -1,39 +1,46 @@
 import ProductSchema from "../models/product.model.js";
+import { deleteFile, uploadFile } from "../services/uploadDrive.service.js";
 import { success, serverInternal, invalidData } from "../utils/response.js";
 
 const getListProduct = async (req, res) => {
     try {
         const listProduct = await ProductSchema.find();
-        success(res, { listProduct });
-    } catch {
-        serverInternal(res);
+        return success(res, { listProduct });
+    } catch (err) {
+        return serverInternal(res);
     }
 };
 
 const createProduct = async (req, res) => {
-    const { name, price, image } = req?.body;
-    if ((name, price, image)) {
+    const { file } = req;
+    const { name, price } = req?.body;
+    if ((file, name, price)) {
         try {
-            await ProductSchema.create({ name, price, image });
-            success(res);
+            const { id, linkImage } = await uploadFile(file);
+            const product = await ProductSchema.create({ name, price, image: linkImage, googleId: id });
+            return success(res, { product });
         } catch {
-            serverInternal(res);
+            return serverInternal(res);
         }
-    } else {
-        invalidData();
     }
+    invalidData(res);
 };
 
 const deleteProduct = async (req, res) => {
     const { id } = req.query;
     if (id) {
         try {
-            await ProductSchema.findByIdAndDelete(id);
-            success(res);
+            const product = await ProductSchema.findByIdAndDelete(id);
+            if (product) {
+                await deleteFile(product?.googleId);
+                return success(res, { product });
+            }
+            return invalidData(res);
         } catch (err) {
-            invalidData(res);
+            return serverInternal(res);
         }
     }
+    invalidData(res);
 };
 
 export { createProduct, deleteProduct, getListProduct };
